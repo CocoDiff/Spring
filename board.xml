@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.shinchen.main.service.impl.MainMapper">
+
+<!-- 	<sql id="listAndPaging">
+		SELECT col_num, user_id, board_pw, title, contents, w_date
+		FROM shinchen.board_data
+	</sql> -->
+	
+	<select id="selectList" resultType="boardVo">
+		SELECT col_num, user_id, board_pw, title, contents, w_date
+		FROM shinchen.board_data
+		limit 5 offset ${offset}
+	</select>
+	
+	<select id="getView" resultType="boardVo">
+		select col_num, user_id, board_pw, title, contents, w_date
+		from shinchen.board_data
+		where col_num = ${col_num}
+	</select>
+	
+	<update id="updateList">
+		update shinchen.board_data
+		set user_id = #{user_id},
+			title = #{title},
+			contents = #{contents},
+			w_date = now()
+		where col_num = #{col_num}
+	</update>
+	
+	<insert id="insertList">
+		insert into shinchen.board_data (
+				user_id, board_pw, title, contents, w_date)
+		values(
+				#{user_id}, #{board_pw}, #{title}, #{contents}, now() )
+	</insert>
+	
+	<delete id="delete">
+		delete from shinchen.board_data
+		where col_num = #{col_num}
+	</delete>
+
+	<select id="searchList" resultType="boardVo">
+		select col_num, user_id, board_pw, title, contents, w_date
+		from(
+				select col_num, user_id, board_pw, title, contents, w_date
+				from shinchen.board_data
+				where
+				<if test="keyword != null">
+					<![CDATA[
+						${searchType} like '%'||#{keyword}||'%'
+					]]>
+				</if>
+			) AS B
+	</select>
+</mapper>
